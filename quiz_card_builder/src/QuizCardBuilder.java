@@ -7,7 +7,7 @@ import java.io.*;
 public class QuizCardBuilder {
   private JTextArea question;
   private JTextArea answer;
-  // private ArrayList<QuizCard> cardList;
+  private ArrayList<QuizCard> cardList;
   private JFrame frame;
 
   public void setupGUI() {
@@ -32,7 +32,7 @@ public class QuizCardBuilder {
 
     JButton nextButton = new JButton("Next Card");
 
-    // cardList = new ArrayList<QuizCard>();
+    cardList = new ArrayList<QuizCard>();
 
     JLabel questionLabel = new JLabel("Question");
     JLabel answerLabel = new JLabel("Answer");
@@ -65,16 +65,51 @@ public class QuizCardBuilder {
   public class newMenuListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-      // TODO Auto-generated method stub
-
+      cardList.clear();
+      clearCard();
     }
   }
 
   public class saveItemListener implements ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
-      // TODO Auto-generated method stub
+      QuizCard card = new QuizCard(question.getText(), answer.getText());
+      cardList.add(card);
 
+      JFileChooser saveOptions = new JFileChooser();
+      saveOptions.showSaveDialog(frame);
+      saveFile(saveOptions.getSelectedFile());
+    }
+  }
+
+  public class nextCardListener implements ActionListener {
+    @Override
+    public void actionPerformed(ActionEvent e) {
+      QuizCard card = new QuizCard(question.getText(), answer.getText());
+      cardList.add(card);
+      clearCard();
+    }
+  }
+
+  private void clearCard() {
+    question.setText("");
+    answer.setText("");
+    question.requestFocus();
+  }
+
+  public void saveFile(File file) {
+    try {
+      BufferedWriter writer = new BufferedWriter(new FileWriter(file));
+
+      for (QuizCard card : cardList) {
+        writer.write(card.getQuestion() + "/");
+        writer.write(card.getAnswer() + "\n");
+      }
+
+      writer.close();
+    } catch (IOException e) {
+      System.out.println("Couldn't save all cards");
+      e.printStackTrace();
     }
   }
 
